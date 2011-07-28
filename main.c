@@ -55,13 +55,14 @@ int main(int argc, char *argv[])
 	{
 		while (1)
 		{
-			if ((fd = open("/dev/KEYSCAN", O_RDONLY)) == -1)
+			if ((fd = open("/dev/KEYSCAN", O_RDWR)) == -1)
 			{
 				perror("Failed to open KEYSCAN");
 				exit(-1);
 			}
 
 			read(fd, &keyno, sizeof(keyno));
+			//printf("keyno=%d\n", keyno);
 
 			if (keyno != 0)
 			{
@@ -134,10 +135,22 @@ int main(int argc, char *argv[])
 					exit(-1);
 				}
 
-				exit(0);
+				keyno = 0;
+
+				if (write(fd, &keyno, sizeof(keyno)) == -1)
+				{
+					perror("Failed to write");
+					exit(-1);
+				}
+
+				close(fd_ada);
+				close(fd_phone);
+				close(fd_serial);
+				close(fd);
 			}
 			else
 			{
+				close(fd);
 				usleep(10000);
 			}
 		}

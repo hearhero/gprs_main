@@ -52,7 +52,23 @@ bool termios_init(int fd, struct termios *tio, int baud)
 		return false;
 	}
 
-	tio->c_cflag |= baud | CS8 | CREAD;
+	tio->c_cflag |= (CS8 | CREAD);
+
+	if (tcsetattr(fd, TCSANOW, tio) == -1)
+	{
+		perror("Failed to tcsetattr");
+		return false;
+	}
+
+	cfsetispeed(tio, baud);
+
+	if (tcsetattr(fd, TCSANOW, tio) == -1)
+	{
+		perror("Failed to tcsetattr");
+		return false;
+	}
+
+	cfsetospeed(tio, baud);
 
 	if (tcsetattr(fd, TCSANOW, tio) == -1)
 	{

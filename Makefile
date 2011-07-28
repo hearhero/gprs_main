@@ -8,4 +8,4 @@ gprs.o : gprs.h
 
 .PHONY : clean
 clean:
-	-rm -f gprs $(OBJECTS)
+	-rm -f main $(OBJECTS)
